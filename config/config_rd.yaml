@@ -1,0 +1,8 @@
+###
+# This parameter specifies the root url for the RestApi endpoints.
+API_ENDPOINT: "https://api.vhh-mmsi.eu/api/tbaservice"   # root url for API endpoints
+
+###
+# Path to the folder that contains the data
+DATA_PATH: "/data/share/fjogl/vhh_rd_data"
+ 
