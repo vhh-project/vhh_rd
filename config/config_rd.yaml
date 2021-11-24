@@ -1,5 +1,6 @@
 ###
 # This parameter specifies the root url for the RestApi endpoints.
+# Should not have a trailing "/"
 API_ENDPOINT: "https://api.vhh-mmsi.eu/api/tbaservice"   # root url for API endpoints
 
 ###
