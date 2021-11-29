@@ -112,7 +112,21 @@ class RD(object):
             input_batch = input_batch.to(device)
 
             features = fe(input_batch).cpu().detach()
-            features = torch.squeeze(torch.squeeze(features, 3), 2).numpy()
+            # Squeeze extra dimensions away
+            if len(features.shape) > 2:
+                # Check if there are enough dimensions to squeeze away
+                if len([x for x in features.shape[2:] if x == 1]) < len(features.shape) - 2:
+                    raise ValueError("Output dimensions from model are wrong")
+
+                # Squeeze extra dimension of size 1 away
+                while(len(features.shape) > 2):
+                    for i in range(2, len(features.shape)):
+                        if features.shape[i] == 1:
+                            features = torch.squeeze(features, i)
+                            break
+
+
+            features = features.numpy()
             for i, img_name in enumerate(img_names):
                 Helpers.do_pickle(features[i,:], self.get_feature_path(img_name))
 
