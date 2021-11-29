@@ -22,4 +22,4 @@ def load_features(img_name, rd):
 def load_img(img_name, rd):
     img_path = os.path.join(rd.extracted_frames_path, img_name)
     img = cv2.imread(img_path)
-    return img_path, img
+    return img

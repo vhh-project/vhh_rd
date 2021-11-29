@@ -3,26 +3,33 @@ import vhh_rd.Helpers as Helpers
 import os
 import cv2 
 import vhh_rd.Distance as Dis
+import math
+import numpy as np
 
 """
 Given an image from the image folder, finds similar images
 Results will be stored in RawRestults/img_name
 """
 
-img_name = "id_8231_frame_8328_sid_54"
+img_name = "id_8248_frame_20560_sid_159"
 config_path = "./config/config_rd.yaml"
-top_results = 10
+nr_top_results = 12
+
+# Size of images stored in visualization, 25 means it will have a fourth of the width and height
+image_size_in_percent = 12
+
+# Must divide top_results
+images_per_row = 6
+
+font = cv2.FONT_HERSHEY_DUPLEX
 
 def main():
     rd = RD.RD(config_path)
     query_features = Helpers.load_features(img_name, rd)
     dist = Dis.Distance(rd.config["DISTANCE_METRIC"], rd.config["METRIC_PARAM"])
 
-    output_path = os.path.join(rd.raw_results_path, img_name)
-    if not os.path.isdir(output_path):
-        os.mkdir(output_path)
-
     similarities = []
+
     # Compute all similarities
     for key_features_name in os.listdir(rd.features_path):
         key_img_name = key_features_name.split("_model_")[0]
@@ -33,17 +40,82 @@ def main():
 
     # Sort by similarity (0 = highest similarity)
     similarities.sort(key=lambda d: d[0])
-    print(similarities[0: top_results+1])
 
-    cv2.imwrite(os.path.join(output_path, "original.png"), Helpers.load_img(img_name + ".png", rd)[1])
+    original_img = Helpers.load_img(img_name + ".png", rd)
+    original_text = {"vid": img_name.split("_")[1], "sid": img_name.split("_")[5]}
 
-    for i in range(top_results):
-        cv2.imwrite(os.path.join(output_path, "top_{0}.png".format(i+1)), Helpers.load_img(similarities[i][1] + ".png", rd)[1])
+    top_imgs = [Helpers.load_img(similarities[i][1] + ".png", rd) for i in range(nr_top_results)]
+    top_text = [{"distance": similarities[i][0], "vid": similarities[i][1].split("_")[1], "sid": similarities[i][1].split("_")[5]}  for i in range(nr_top_results)]
 
-    # Save worst results
+    # Work on worst results
     similarities.reverse()
-    for i in range(top_results):
-        cv2.imwrite(os.path.join(output_path, "top_{0}.png".format(len(similarities) - i)), Helpers.load_img(similarities[i][1] + ".png", rd)[1])
+    bot_imgs = [Helpers.load_img(similarities[i][1] + ".png", rd) for i in range(nr_top_results)]
+    bot_text = [{"distance": similarities[i][0], "vid": similarities[i][1].split("_")[1], "sid": similarities[i][1].split("_")[5]}  for i in range(nr_top_results)]
+
+    text = {"original": original_text, "top":top_text, "bot": bot_text}
+    visualization_path = os.path.join(rd.raw_results_path, img_name + ".png")
+    visualize(original_img, top_imgs, bot_imgs, text, visualization_path)
+
+def get_dimension_after_resizing(img, percentage):
+    width = int(img.shape[1] * percentage / 100)
+    height = int(img.shape[0] * percentage / 100)
+    return width, height
+
+def resize(img, width, height):
+    return cv2.resize(img, (width, height), interpolation = cv2.INTER_AREA)
+
+def combine_images(imgs, images_per_row, width, height, text):
+    rows = []
+    while (len(imgs) > 0):
+        # Create a row of images
+        row = [imgs.pop(0) for _ in range(min(len(imgs), images_per_row))]
+        text_row = [text.pop(0) for _ in range(min(len(text), images_per_row))]
+        row = [resize(x, width, height) for x in row]
+        for i in range(len(row)):
+            # Add text on top
+            img = cv2.copyMakeBorder(row[i] ,50,0,0,0,cv2.BORDER_CONSTANT,value=[255,255,255])
+            cv2.putText(img,"Distance: {0}".format(round(text_row[i]["distance"], 2)), (5,15), font, 0.5, [0, 0, 0])
+            cv2.putText(img,"VID: {0}, SID: {1}".format(text_row[i]["vid"], text_row[i]["sid"]), (5,35), font, 0.5, [0, 0, 0])
+            row[i] = img
+
+        #Combine
+        row = np.hstack(row)
+        rows.append(row)
+    return np.vstack(rows)
+
+def visualize(original, top_imgs, bot_imgs, text, output_path):
+    nr_rows = math.ceil(len(top_imgs) / float(images_per_row)) + math.ceil(len(bot_imgs) / float(images_per_row))
+    width, height = get_dimension_after_resizing(original, image_size_in_percent)
+
+    # Create the parts that contain the best and worst images
+    top_results = combine_images(top_imgs, images_per_row, width, height, text["top"])
+    bottom_results = combine_images(bot_imgs, images_per_row, width, height, text["bot"])
+
+    width_bar = top_results.shape[1]
+    white_bar = np.zeros([50, width_bar, 3],dtype=np.uint8)
+    white_bar.fill(255)
+
+    # Create bars that say "Top/Bottom x results" 
+    top_results_bar = white_bar.copy()
+    cv2.putText(top_results_bar,"Top {0} results".format(nr_top_results), (5,30), font, 1, [0, 0, 255])
+    bot_results_bar = white_bar.copy()
+    cv2.putText(bot_results_bar,"Bottom {0} results".format(nr_top_results), (5,30), font, 1, [0, 0, 255])
+
+    right_side = np.vstack([top_results_bar, top_results, bot_results_bar, bottom_results])
+
+    # Add original image on the left side
+    og_w, og_h = get_dimension_after_resizing(original, image_size_in_percent * nr_rows)
+    original = resize(original, og_w, og_h)
+    missing_height = right_side.shape[0] - original.shape[0]
+    filler_top = math.ceil(missing_height / 2.)
+    filler_bot = math.floor(missing_height / 2.)
+    left_side = cv2.copyMakeBorder(original, filler_top,filler_bot,0,0,cv2.BORDER_CONSTANT,value=[255,255,255])
+    cv2.putText(left_side,"Query image", (5,50), font, 1.5, [0, 0, 255])
+    cv2.putText(left_side,"VID {0}, SID: {1}".format(text["original"]["vid"], text["original"]["sid"]), (5,90), font, 0.5, [0, 0, 255])
+
+    # Combine everything
+    final_visualization = np.hstack([left_side, right_side])
+    cv2.imwrite(output_path, final_visualization)
 
 if __name__ == "__main__":
     main()

@@ -104,7 +104,7 @@ class RD(object):
         for img_names in tqdm(imgs_as_batches):
             tensors = []
             for img_name in img_names:
-                _, img = Helpers.load_img(img_name, self)
+                img = Helpers.load_img(img_name, self)
                 input_tensor = preprocess(img)
                 tensors.append(input_tensor)
 
