@@ -61,7 +61,7 @@ def main():
     bot_text = [{"distance": similarities[i][0], "vid": similarities[i][1].split("_")[1], "sid": similarities[i][1].split("_")[5]}  for i in range(nr_top_results)]
 
     text = {"original": original_text, "top":top_text, "bot": bot_text}
-    visualization_path = os.path.join(rd.raw_results_path, img_name + ".png")
+    visualization_path = os.path.join(rd.raw_results_path, img_name + "_model_" + rd.config["MODEL"] + "_metric_" + rd.config["DISTANCE_METRIC"] + ".png")
     visualize(rd, original_img, top_imgs, bot_imgs, text, visualization_path)
 
 def get_dimension_after_resizing(img, percentage):
