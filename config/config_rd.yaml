@@ -17,10 +17,10 @@ SHOT_PATH: "/data/ext/VHH/release_results/release_v1_3_0/vhh_core/results_part1/
 
 ###
 # Model to use for feature extractor (resnet152, resnet50)
-MODEL: "resnet152"
+MODEL: "resnet50"
 
 ###
-# Distance metric used to compute similarities (euclidean, manhattan, chebyshev, minkowski, seuclidean, mahalanobis)
+# Distance metric used to compute similarities (euclidean, manhattan, chebyshev, minkowski)
 DISTANCE_METRIC: "euclidean"
 
 ###
