@@ -31,7 +31,7 @@ def main():
     print("Plotting UMAP")
     plt.scatter(embedding[:, 0], embedding[:, 1], s = 1)
     plt.gca().set_aspect('equal', 'datalim')
-    plt.title('UMAP projection', fontsize=12)
+    plt.title('UMAP projection ({0})'.format(rd.config["MODEL"]), fontsize=12)
     plt.savefig(os.path.join(rd.visualizations_path, "UMAP_{0}.png".format(rd.config["MODEL"])))
     plt.close()
 
@@ -40,7 +40,7 @@ def main():
     print("Plotting t-SNE")
     plt.scatter(embedding[:, 0], embedding[:, 1], s = 1)
     plt.gca().set_aspect('equal', 'datalim')
-    plt.title('t-SNE projection', fontsize=12)
+    plt.title('t-SNE projection ({0})'.format(rd.config["MODEL"]), fontsize=12)
     plt.savefig(os.path.join(rd.visualizations_path, "t-SNE_{0}.png".format(rd.config["MODEL"])))
 
 if __name__ == "__main__":
