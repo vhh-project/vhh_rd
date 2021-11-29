@@ -13,6 +13,9 @@ def do_unpickle(filepath):
         return pickle.load(pickleFile)
 
 def load_features(img_name, rd):
+    """
+    Given an img name, loads the corresponding feature
+    """
     features_path = rd.get_feature_path(img_name)
     return do_unpickle(features_path) 
 

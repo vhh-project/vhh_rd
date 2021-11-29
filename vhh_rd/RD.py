@@ -19,16 +19,17 @@ class RD(object):
         self.config = Config.Config(config_path)
 
         # Ensure the data directory has the needed subdirectories
-        dirs = ["ExtractedFrames", "Features", "RawResults"]
+        dirs = ["ExtractedFrames", "FinalResults",  os.path.join("FinalResults", self.config["MODEL"]), "RawResults", "Visualizations"]
         for dir in dirs:
             dir_to_create = os.path.join(self.config["DATA_PATH"], dir)
             if not os.path.isdir(dir_to_create):
                 os.mkdir(dir_to_create)
 
         self.extracted_frames_path = os.path.join(self.config["DATA_PATH"], "ExtractedFrames")
-        self.features_path = os.path.join(self.config["DATA_PATH"], "Features")
+        self.features_path = os.path.join(self.config["DATA_PATH"], "FinalResults", self.config["MODEL"])
         self.raw_results_path = os.path.join(self.config["DATA_PATH"], "RawResults")
-
+        self.visualizations_path = os.path.join(self.config["DATA_PATH"], "Visualizations")
+    
     def collect_videos(self):
         """
         Collects the videos from the directory specified in the config
@@ -85,13 +86,7 @@ class RD(object):
     
     def do_feature_extraction(self):
         fe = FE.FeatureExtractor(self.config["MODEL"])
-
-        preprocess = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        ])
+        preprocess = fe.get_preprocessing()
 
         device = "cpu"
         if torch.cuda.is_available():
@@ -133,6 +128,3 @@ class RD(object):
 
         print("Compute features")
         self.do_feature_extraction()
-        
-        print("Compute similarity matrix")
-        self.compute_similarity_matrx()
