@@ -24,6 +24,8 @@ images_per_row = 6
 font = cv2.FONT_HERSHEY_DUPLEX
 
 def main():
+    print("\nOriginal image: {0}".format(img_name))
+
     rd = RD.RD(config_path)
     query_features = Helpers.load_features(img_name, rd)
     dist = Dis.Distance(rd.config["DISTANCE_METRIC"], rd.config["METRIC_PARAM"])
@@ -47,7 +49,13 @@ def main():
     top_imgs = [Helpers.load_img(similarities[i][1] + ".png", rd) for i in range(nr_top_results)]
     top_text = [{"distance": similarities[i][0], "vid": similarities[i][1].split("_")[1], "sid": similarities[i][1].split("_")[5]}  for i in range(nr_top_results)]
 
-    # Work on worst results
+    print("{0} images searched".format(len(similarities)))
+    print("Most similar images:")
+    for i in range(nr_top_results):
+        print("\t{0}, distance: {1}".format(similarities[i][1], similarities[i][0]))
+
+
+    # Work on worst results (0 = lowest similarity)
     similarities.reverse()
     bot_imgs = [Helpers.load_img(similarities[i][1] + ".png", rd) for i in range(nr_top_results)]
     bot_text = [{"distance": similarities[i][0], "vid": similarities[i][1].split("_")[1], "sid": similarities[i][1].split("_")[5]}  for i in range(nr_top_results)]
