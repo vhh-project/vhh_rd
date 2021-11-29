@@ -62,7 +62,7 @@ def main():
 
     text = {"original": original_text, "top":top_text, "bot": bot_text}
     visualization_path = os.path.join(rd.raw_results_path, img_name + ".png")
-    visualize(original_img, top_imgs, bot_imgs, text, visualization_path)
+    visualize(rd, original_img, top_imgs, bot_imgs, text, visualization_path)
 
 def get_dimension_after_resizing(img, percentage):
     width = int(img.shape[1] * percentage / 100)
@@ -91,7 +91,7 @@ def combine_images(imgs, images_per_row, width, height, text):
         rows.append(row)
     return np.vstack(rows)
 
-def visualize(original, top_imgs, bot_imgs, text, output_path):
+def visualize(rd, original, top_imgs, bot_imgs, text, output_path):
     nr_rows = math.ceil(len(top_imgs) / float(images_per_row)) + math.ceil(len(bot_imgs) / float(images_per_row))
     width, height = get_dimension_after_resizing(original, image_size_in_percent)
 
@@ -120,6 +120,8 @@ def visualize(original, top_imgs, bot_imgs, text, output_path):
     left_side = cv2.copyMakeBorder(original, filler_top,filler_bot,0,0,cv2.BORDER_CONSTANT,value=[255,255,255])
     cv2.putText(left_side,"Query image", (5,50), font, 1.5, [0, 0, 255])
     cv2.putText(left_side,"VID {0}, SID: {1}".format(text["original"]["vid"], text["original"]["sid"]), (5,90), font, 0.5, [0, 0, 255])
+
+    cv2.putText(left_side,"Model: {0}, Distance metric: {1}".format(rd.config["MODEL"], rd.config["DISTANCE_METRIC"]), (5,right_side.shape[0] - 10), font, 0.5, [0, 0, 255])
 
     # Combine everything
     final_visualization = np.hstack([left_side, right_side])
