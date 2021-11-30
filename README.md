@@ -52,4 +52,4 @@ We developed and tested this module with pytorch 1.10.0+cu113 and torchvision 0.
   * To find similar frames for a frame with the name $IMG_NAME in the ```ExtractedFrames``` directory, run ```python Demo/find_similar_images.py -i IMG_NAME```
 
 ## Release Generation
-Will be added later
+Will be added later.
