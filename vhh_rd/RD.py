@@ -9,6 +9,8 @@ import csv
 from torchvision import transforms
 import torch
 from tqdm import tqdm
+from vhh_rd.Dataset import ImageDataset
+from torch.utils.data import DataLoader
 
 class RD(object):
     """
@@ -93,25 +95,25 @@ class RD(object):
             device = "cuda"
         fe.model.to(device)
 
-        imgs_all = os.listdir(self.extracted_frames_path)
+        img_names_all = os.listdir(self.extracted_frames_path)
 
         # Remove images whose features we have already computed
-        imgs_all = [x for x in imgs_all if not os.path.exists(self.get_feature_path(x))]
+        img_names = [x for x in img_names_all if not os.path.exists(self.get_feature_path(x))]
 
-        batchsize = self.config["BATCHSIZE"]
-        imgs_as_batches = [imgs_all[i:i+batchsize] for i in range(0, len(imgs_all), batchsize)]
+        # Get path to images
+        img_paths = [os.path.join(self.extracted_frames_path, img_name) for img_name in img_names]
 
-        for img_names in tqdm(imgs_as_batches):
-            tensors = []
-            for img_name in img_names:
-                img = Helpers.load_img(img_name, self)
-                input_tensor = preprocess(img)
-                tensors.append(input_tensor)
+        dataset = ImageDataset(img_paths, preprocess)
+        dataLoader = DataLoader(dataset, batch_size=self.config["BATCHSIZE"])
 
-            input_batch = torch.stack(tensors)
+        for batch in tqdm(dataLoader):
+            input_batch = batch["img"]
             input_batch = input_batch.to(device)
+            img_names = batch["img_name"]
 
+            # Compute features
             features = fe(input_batch).cpu().detach()
+
             # Squeeze extra dimensions away
             if len(features.shape) > 2:
                 # Check if there are enough dimensions to squeeze away
@@ -124,7 +126,6 @@ class RD(object):
                         if features.shape[i] == 1:
                             features = torch.squeeze(features, i)
                             break
-
 
             features = features.numpy()
             for i, img_name in enumerate(img_names):
