@@ -15,10 +15,9 @@ config_path = "./config/config_rd.yaml"
 
 def main():
     rd = RD.RD(config_path)
-    similarities = []
-    # Compute all similarities
-    features = []
+
     print("Loading features")
+    features = []
     for ft_name in os.listdir(rd.features_path):
         path = os.path.join(rd.features_path, ft_name)
         feature = Helpers.do_unpickle(path)
