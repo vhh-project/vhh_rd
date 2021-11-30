@@ -32,8 +32,10 @@ def main():
     plt.scatter(embedding[:, 0], embedding[:, 1], s = 1)
     plt.gca().set_aspect('equal', 'datalim')
     plt.title('UMAP projection ({0})'.format(rd.config["MODEL"]), fontsize=12)
-    plt.savefig(os.path.join(rd.visualizations_path, "UMAP_{0}.png".format(rd.config["MODEL"])))
+    umap_path = os.path.join(rd.visualizations_path, "UMAP_{0}.png".format(rd.config["MODEL"]))
+    plt.savefig(umap_path)
     plt.close()
+    print("Stored plot of UMAP at {0}".format(umap_path))
 
     print("Fitting t-SNE")
     embedding = TSNE(n_components=2, learning_rate='auto', init='random').fit_transform(np.asarray(features, dtype=np.float32))
@@ -41,7 +43,9 @@ def main():
     plt.scatter(embedding[:, 0], embedding[:, 1], s = 1)
     plt.gca().set_aspect('equal', 'datalim')
     plt.title('t-SNE projection ({0})'.format(rd.config["MODEL"]), fontsize=12)
-    plt.savefig(os.path.join(rd.visualizations_path, "t-SNE_{0}.png".format(rd.config["MODEL"])))
+    tSNE_path = os.path.join(rd.visualizations_path, "t-SNE_{0}.png".format(rd.config["MODEL"]))
+    plt.savefig(tSNE_path)
+    print("Stored plot of t-SNE at {0}".format(tSNE_path))
 
 if __name__ == "__main__":
     main()
