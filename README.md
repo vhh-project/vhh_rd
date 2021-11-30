@@ -1,6 +1,10 @@
 # VHH Plugin Package: Relation Detection
 This package includes methods to compute similarity between scenes and find scenes that are similar to a given query scene.
 
+## Package Description
+Will be added later.
+    
+
 ## Quick Setup
 
 The following instructions have to be done to used this library in your own application:
@@ -47,3 +51,5 @@ We developed and tested this module with pytorch 1.10.0+cu113 and torchvision 0.
   * To visualize the computed feature vectors, run ```python Demo/visualize_dataset.py```
   * To find similar frames for a frame with the name $IMG_NAME in the ```ExtractedFrames``` directory, run ```python Demo/find_similar_images.py -i IMG_NAME```
 
+## Release Generation
+Will be added later
