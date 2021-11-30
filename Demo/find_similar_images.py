@@ -5,13 +5,16 @@ import cv2
 import vhh_rd.Distance as Dis
 import math
 import numpy as np
+import argparse
 
 """
 Given an image from the image folder, finds similar images
 Results will be stored in RawRestults/img_name
+Run with 
+    python Demo/find_similar_images.py -i IMG_NAME
+where IMG_NAME is the name of a frame in the ExtractedFrames directory
 """
 
-img_name = "id_8248_frame_20560_sid_159"
 config_path = "./config/config_rd.yaml"
 nr_top_results = 12
 
@@ -24,9 +27,25 @@ images_per_row = 6
 font = cv2.FONT_HERSHEY_DUPLEX
 
 def main():
+    rd = RD.RD(config_path)
+
+    # ARGUMENT PARSING
+
+    parser = argparse.ArgumentParser(description="")
+
+    # Get the folder with the pictures as an argument
+    required_args = parser.add_argument_group('required arguments')
+    required_args.add_argument('-i', dest='img_name', help =
+    "The query image in the ExractedFrames directory", required=True)
+    args = parser.parse_args()
+    img_name = args.img_name
+
+    # Remove .png ending
+    img_name = img_name.replace(".png", "")
+
+
     print("\nOriginal image: {0}".format(img_name))
 
-    rd = RD.RD(config_path)
     query_features = Helpers.load_features(img_name, rd)
     dist = Dis.Distance(rd.config["DISTANCE_METRIC"], rd.config["METRIC_PARAM"])
 
@@ -63,6 +82,7 @@ def main():
     text = {"original": original_text, "top":top_text, "bot": bot_text}
     visualization_path = os.path.join(rd.raw_results_path, img_name + "_model_" + rd.config["MODEL"] + "_metric_" + rd.config["DISTANCE_METRIC"] + ".png")
     visualize(rd, original_img, top_imgs, bot_imgs, text, visualization_path)
+    print("Stored visualization at {0}".format(visualization_path))
 
 def get_dimension_after_resizing(img, percentage):
     width = int(img.shape[1] * percentage / 100)
