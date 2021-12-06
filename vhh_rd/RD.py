@@ -21,7 +21,7 @@ class RD(object):
         self.config = Config.Config(config_path)
 
         # Ensure the data directory has the needed subdirectories
-        dirs = ["ExtractedFrames", "FinalResults",  os.path.join("FinalResults", self.config["MODEL"]), "RawResults", "Visualizations"]
+        dirs = ["ExtractedFrames", "FinalResults",  os.path.join("FinalResults", self.config["MODEL"]), "RawResults", "Visualizations", "Models"]
         for dir in dirs:
             dir_to_create = os.path.join(self.config["DATA_PATH"], dir)
             if not os.path.isdir(dir_to_create):
@@ -31,6 +31,7 @@ class RD(object):
         self.features_path = os.path.join(self.config["DATA_PATH"], "FinalResults", self.config["MODEL"])
         self.raw_results_path = os.path.join(self.config["DATA_PATH"], "RawResults")
         self.visualizations_path = os.path.join(self.config["DATA_PATH"], "Visualizations")
+        self.models_path = os.path.join(self.config["DATA_PATH"], "Models")
     
     def collect_videos(self):
         """

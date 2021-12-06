@@ -24,9 +24,36 @@ MODEL: "resnet50"
 DISTANCE_METRIC: "euclidean"
 
 ###
+# Path to the siamese net data (images)
+SIAM_TRAIN_PATH: "/caa/Projects02/vhh/private/database_nobackup/stc_vhh_mmsi_1_3_0/stc_vhh_mmsi_v1_3_0/train"
+SIAM_VAL_PATH: "/caa/Projects02/vhh/private/database_nobackup/stc_vhh_mmsi_1_3_0/stc_vhh_mmsi_v1_3_0/val"
+SIAM_TEST_PATH: "/caa/Projects02/vhh/private/database_nobackup/stc_vhh_mmsi_1_3_0/stc_vhh_mmsi_v1_3_0/test"
+
+
+###
 # Additional metric parameter, only used for minkowski
 METRIC_PARAM: 20
 
 ###
-# Batchsize 
-BATCHSIZE: 16
+# Batchsize for inference
+BATCHSIZE: 64
+
+###
+# Batchsize during training
+BATCHSIZE_TRAIN: 8
+
+###
+# Batchsize during training
+BATCHSIZE_EVALUATE: 16
+
+###
+# Number of epochs
+NR_EPOCHS: 100
+
+###
+# Loss type to use during training (triplet, cosine)
+LOSS_TYPE: "triplet"
+
+###
+# After this number of epochs without improvement the training will stop and the best model will be loaded
+EPOCHS_EARLY_STPOPPING: 5
