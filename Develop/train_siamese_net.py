@@ -5,7 +5,7 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 import numpy as np
-import os, sys, glob, random
+import os, sys, glob, random, itertools
 import cv2
 import imgaug.augmenters as iaa
 import imgaug as ia
@@ -15,6 +15,9 @@ import wandb
 
 config_path = "./config/config_rd.yaml"
 lr = 0.00001
+
+# Do not use NA directory
+dirs_to_use = ["CU", "ELS", "LS", "MS", "I"]
 
 class TriplesDataset(Dataset):
     """
@@ -26,7 +29,7 @@ class TriplesDataset(Dataset):
         """
         self.transforms = transforms
         self.augmentations = augmentations
-        self.images_paths = glob.glob(os.path.join(image_folder, "**/*.png"))
+        self.images_paths = list(set(glob.glob(os.path.join(image_folder, "**/*.png"))) - set(glob.glob(os.path.join(image_folder, "NA/*.png"))))
         np.random.shuffle(self.images_paths)
 
         # self.i = 0
@@ -130,7 +133,7 @@ def main():
         return -1*cos(a,b)
 
     criterion_cos = nn.CosineEmbeddingLoss(reduction='sum')
-    criterion_sim =  torch.nn.TripletMarginWithDistanceLoss(distance_function=neg_CosineSimilarity, margin=1.7, reduction='sum')
+    criterion_sim =  torch.nn.TripletMarginWithDistanceLoss(distance_function=neg_CosineSimilarity, reduction='sum')
 
     if loss_type == "cosine":
         criterion = criterion_cos
