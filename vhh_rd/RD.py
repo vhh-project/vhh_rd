@@ -21,14 +21,19 @@ class RD(object):
         self.config = Config.Config(config_path)
 
         # Ensure the data directory has the needed subdirectories
-        dirs = ["ExtractedFrames", "FinalResults",  os.path.join("FinalResults", self.config["MODEL"]), "RawResults", "Visualizations", "Models"]
+        dirs = ["ExtractedFrames", "FinalResults",  os.path.join("FinalResults", self.config["MODEL"]), os.path.join("FinalResults", self.config["MODEL"] + "_siamese"), "RawResults", "Visualizations", "Models"]
         for dir in dirs:
             dir_to_create = os.path.join(self.config["DATA_PATH"], dir)
             if not os.path.isdir(dir_to_create):
                 os.mkdir(dir_to_create)
 
         self.extracted_frames_path = os.path.join(self.config["DATA_PATH"], "ExtractedFrames")
-        self.features_path = os.path.join(self.config["DATA_PATH"], "FinalResults", self.config["MODEL"])
+
+        if self.config["SIAMESE"]:
+            self.features_path = os.path.join(self.config["DATA_PATH"], "FinalResults", self.config["MODEL"] + "_siamese")
+        else:
+            self.features_path = os.path.join(self.config["DATA_PATH"], "FinalResults", self.config["MODEL"])
+            
         self.raw_results_path = os.path.join(self.config["DATA_PATH"], "RawResults")
         self.visualizations_path = os.path.join(self.config["DATA_PATH"], "Visualizations")
         self.models_path = os.path.join(self.config["DATA_PATH"], "Models")
@@ -81,14 +86,23 @@ class RD(object):
                     continue
                 cv2.imwrite(path, image)
 
-    def get_feature_path(self, img_name):
+    def get_feature_path(self, img_name, isSiam = False):
         """
         The path at which a feature of a given image will be stored
         """
+        siamString = ""
+        if isSiam:
+            siamString = "_siamese"
         return os.path.join(self.features_path, img_name.split(".")[0] + "_model_{0}.pickle".format(self.config["MODEL"]))
     
     def do_feature_extraction(self):
         fe = FE.FeatureExtractor(self.config["MODEL"])
+        isSiam = self.config["SIAMESE"]
+        if isSiam:
+            modelsPath = os.path.join(self.models_path, self.config["MODEL"])
+            fe.load_weights(modelsPath)
+
+
         preprocess = fe.get_preprocessing()
 
         device = "cpu"
@@ -130,7 +144,7 @@ class RD(object):
 
             features = features.numpy()
             for i, img_name in enumerate(img_names):
-                Helpers.do_pickle(features[i,:], self.get_feature_path(img_name))
+                Helpers.do_pickle(features[i,:], self.get_feature_path(img_name, isSiam=isSiam))
 
     def run(self):  
         print("Collect videos")

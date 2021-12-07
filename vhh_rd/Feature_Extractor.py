@@ -27,6 +27,9 @@ class FeatureExtractor(nn.Module):
                 p.requires_grad = False
             self.model.eval()
 
+    def load_weights(self, modelPath):
+        self.load_state_dict(torch.load(modelPath))
+
     def get_preprocessing(self, siamese = False):
         """
         If siamese is true then the image will not be turned to a tensor to allow augmentations

@@ -20,14 +20,13 @@ SHOT_PATH: "/data/ext/VHH/release_results/release_v1_3_0/vhh_core/results_part1/
 MODEL: "resnet50"
 
 ###
-# Distance metric used to compute similarities (euclidean, manhattan, chebyshev, minkowski)
-DISTANCE_METRIC: "euclidean"
+# Siamese
+SIAMESE: True
+
 
 ###
-# Path to the siamese net data (images)
-SIAM_TRAIN_PATH: "/caa/Projects02/vhh/private/database_nobackup/stc_vhh_mmsi_1_3_0/stc_vhh_mmsi_v1_3_0/train"
-SIAM_VAL_PATH: "/caa/Projects02/vhh/private/database_nobackup/stc_vhh_mmsi_1_3_0/stc_vhh_mmsi_v1_3_0/val"
-SIAM_TEST_PATH: "/caa/Projects02/vhh/private/database_nobackup/stc_vhh_mmsi_1_3_0/stc_vhh_mmsi_v1_3_0/test"
+# Distance metric used to compute similarities (euclidean, manhattan, chebyshev, minkowski)
+DISTANCE_METRIC: "euclidean"
 
 
 ###
@@ -37,6 +36,18 @@ METRIC_PARAM: 20
 ###
 # Batchsize for inference
 BATCHSIZE: 64
+
+###########################################
+#
+# PARAMETERS FOR TRAINING SIAMESE NET
+#
+###########################################
+
+###
+# Path to the siamese net data (images)
+SIAM_TRAIN_PATH: "/caa/Projects02/vhh/private/database_nobackup/stc_vhh_mmsi_1_3_0/stc_vhh_mmsi_v1_3_0/train"
+SIAM_VAL_PATH: "/caa/Projects02/vhh/private/database_nobackup/stc_vhh_mmsi_1_3_0/stc_vhh_mmsi_v1_3_0/val"
+SIAM_TEST_PATH: "/caa/Projects02/vhh/private/database_nobackup/stc_vhh_mmsi_1_3_0/stc_vhh_mmsi_v1_3_0/test"
 
 ###
 # Batchsize during training

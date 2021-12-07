@@ -43,6 +43,9 @@ def main():
     # Remove .png ending
     img_name = img_name.replace(".png", "")
 
+    modelInfo = ""
+    if rd.config["SIAMESE"]:
+        modelInfo = "_siamese"
 
     print("\nOriginal image: {0}".format(img_name))
 
@@ -80,7 +83,7 @@ def main():
     bot_text = [{"distance": similarities[i][0], "vid": similarities[i][1].split("_")[1], "sid": similarities[i][1].split("_")[5]}  for i in range(nr_top_results)]
 
     text = {"original": original_text, "top":top_text, "bot": bot_text}
-    visualization_path = os.path.join(rd.raw_results_path, img_name + "_model_" + rd.config["MODEL"] + "_metric_" + rd.config["DISTANCE_METRIC"] + ".png")
+    visualization_path = os.path.join(rd.raw_results_path, img_name + "_model_" + rd.config["MODEL"] + "_metric_" + rd.config["DISTANCE_METRIC"] + modelInfo + ".png")
     visualize(rd, original_img, top_imgs, bot_imgs, text, visualization_path)
     print("Stored visualization at {0}".format(visualization_path))
 
