@@ -27,6 +27,8 @@ class TriplesDataset(Dataset):
         self.transforms = transforms
         self.augmentations = augmentations
         self.images_paths = glob.glob(os.path.join(image_folder, "**/*.png"))
+        np.random.shuffle(self.images_paths)
+
         # self.i = 0
 
     def __len__(self):
@@ -71,7 +73,7 @@ def evaluate(data_loader, model, criterion_cosine, criterion_similarity, device)
     curr_loss_sim = 0
     dataset = data_loader.dataset
     dataset.set_seed()
-    for i, batch in enumerate(data_loader):
+    for i, batch in enumerate(tqdm(data_loader)):
         images = batch["original"].to(device)
         batch_length = images.shape[0]
         out_images = model(images)
@@ -170,9 +172,9 @@ def main():
             loss.backward()
             optimizer.step()
             curr_loss += loss.item()
-            print("\t{0} / {1}\t Loss {2}".format(i+1, len(train_loader), loss.item()))
+            print("\t{0} / {1}\t Loss {2}".format(i+1, len(train_loader), loss.item() / batch_length))
 
-        curr_loss = curr_loss / len(train_loader)
+        curr_loss = curr_loss / len(train_loader.dataset)
         print("Epoch {0}\nTraining Loss {1}".format(epoch, curr_loss))
 
         # Validate 
@@ -199,9 +201,11 @@ def main():
                 model.load_state_dict(torch.load(modelPath))
                 break
 
-    test_cos_loss, test_tri_loss = evaluate(test_loader, model, criterion_cos, criterion_sim, device)
     print("\n\n\nFINAL EVALUATION:")
+
     val_cos_loss, val_tri_loss = evaluate(val_loader, model, criterion_cos, criterion_sim, device)
+    test_cos_loss, test_tri_loss = evaluate(test_loader, model, criterion_cos, criterion_sim, device)
+
     print("Validation triplet loss: {0}\t Cosine loss: {1}".format(val_tri_loss, val_cos_loss))
     print("Test triplet loss: {0}\t Cosine loss: {1}".format(test_tri_loss, test_cos_loss))
     wandb.log({'Test\LossTriplet': test_tri_loss, "Test\LossCos": test_cos_loss})
