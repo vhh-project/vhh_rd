@@ -68,3 +68,7 @@ LOSS_TYPE: "triplet"
 ###
 # After this number of epochs without improvement the training will stop and the best model will be loaded
 EPOCHS_EARLY_STPOPPING: 5
+
+###
+# Nummer of workers for data preparation 
+NUM_WORKERS_TRAINING: 6
