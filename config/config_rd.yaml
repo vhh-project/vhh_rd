@@ -26,7 +26,7 @@ SIAMESE: True
 
 ###
 # Distance metric used to compute similarities (euclidean, manhattan, chebyshev, minkowski)
-DISTANCE_METRIC: "euclidean"
+DISTANCE_METRIC: "cosine"
 
 
 ###
@@ -51,7 +51,7 @@ SIAM_TEST_PATH: "/caa/Projects02/vhh/private/database_nobackup/stc_vhh_mmsi_1_3_
 
 ###
 # Batchsize during training
-BATCHSIZE_TRAIN: 8
+BATCHSIZE_TRAIN: 4
 
 ###
 # Batchsize during training
@@ -63,7 +63,7 @@ NR_EPOCHS: 100
 
 ###
 # Loss type to use during training (triplet, cosine)
-LOSS_TYPE: "triplet"
+LOSS_TYPE: "cosine"
 
 ###
 # After this number of epochs without improvement the training will stop and the best model will be loaded

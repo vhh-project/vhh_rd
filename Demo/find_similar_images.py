@@ -65,6 +65,10 @@ def main():
     # Sort by similarity (0 = highest similarity)
     similarities.sort(key=lambda d: d[0])
 
+    if rd.config["DISTANCE_METRIC"] == "cosine":
+        print("Using cosine similarity")
+        similarities.reverse()
+
     original_img = Helpers.load_img(img_name + ".png", rd)
     original_text = {"vid": img_name.split("_")[1], "sid": img_name.split("_")[5]}
 
