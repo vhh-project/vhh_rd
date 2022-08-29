@@ -47,6 +47,8 @@ We developed and tested this module with pytorch 1.10.0+cu113 and torchvision 0.
 
 ### 2 Run the scripts (optional)
 
+  * To download all annotated films, run ```python download_videos.py -p /data/ext/VHH/datasets/vhh_mmsi_v1_5_0_relation_db/films -a```
+  * To download all sbd annotations as csv, run ```python download_annotation_results.py -a -c -p /data/ext/VHH/datasets/vhh_mmsi_v1_5_0_relation_db/annotations```
   * To extract center frames from shots and compute feature vectors, run ```python Demo/run_vhh_rd.py```
   * To visualize the computed feature vectors, run ```python Demo/visualize_dataset.py```
   * To find similar frames for a frame with the name $IMG_NAME in the ```ExtractedFrames``` directory, run ```python Demo/find_similar_images.py -i IMG_NAME```
