@@ -5,28 +5,28 @@ API_ENDPOINT: "https://api.vhh-mmsi.eu/api/tbaservice"   # root url for API endp
 
 ###
 # Path to the folder which will store the data
-DATA_PATH: "/data/share/fjogl/vhh_rd_data"
+DATA_PATH: "/data/ext/VHH/datasets/vhh_mmsi_v1_5_0_relation_db/vhh_rd_data/"
 
 ###
 # Path to the directory that contains the videos
-VIDEO_PATH: "/data/ext/VHH/release_results/release_v1_3_0/vhh_core/videos_part1/"
+VIDEO_PATH: "/data/ext/VHH/datasets/vhh_mmsi_v1_5_0_relation_db/films/"
 
 ###
 # Path to the directory that contains the shot information
-SHOT_PATH: "/data/ext/VHH/release_results/release_v1_3_0/vhh_core/results_part1/sbd/final_results"
+SHOT_PATH: "/data/ext/VHH/datasets/vhh_mmsi_v1_5_0_relation_db/annotations/"
 
 ###
 # Model to use for feature extractor (resnet152, resnet50)
-MODEL: "resnet50"
+MODEL: "resnet152"
 
 ###
 # Siamese
-SIAMESE: True
+SIAMESE: False
 
 
 ###
 # Distance metric used to compute similarities (euclidean, manhattan, chebyshev, minkowski)
-DISTANCE_METRIC: "euclidean"
+DISTANCE_METRIC: "cosine"
 
 
 ###
@@ -51,7 +51,7 @@ SIAM_TEST_PATH: "/caa/Projects02/vhh/private/database_nobackup/stc_vhh_mmsi_1_3_
 
 ###
 # Batchsize during training
-BATCHSIZE_TRAIN: 8
+BATCHSIZE_TRAIN: 4
 
 ###
 # Batchsize during training
@@ -63,7 +63,7 @@ NR_EPOCHS: 100
 
 ###
 # Loss type to use during training (triplet, cosine)
-LOSS_TYPE: "triplet"
+LOSS_TYPE: "cosine"
 
 ###
 # After this number of epochs without improvement the training will stop and the best model will be loaded

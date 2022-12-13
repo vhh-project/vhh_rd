@@ -14,7 +14,7 @@ import wandb
 import imgaug as ia
 
 config_path = "./config/config_rd.yaml"
-lr = 0.00001
+lr = 0.000001
 
 # Do not use NA directory
 dirs_to_use = ["CU", "ELS", "LS", "MS", "I"]
